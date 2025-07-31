@@ -1,0 +1,38 @@
+name: Build
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+      - develop
+      - hotfix/*
+
+jobs:
+  build:
+    name: Build
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest]
+    steps:
+      - name: Get the sources
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install .NET SDK 8.0.x
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Install .NET SDK 10.0.100-preview.6.25358.103
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.100-preview.6.25358.103'
+
+      - name: Run dotnet new --help with diagnostic verbosity
+        run: dotnet new sln --help -d -v diag
+
+      - name: Run dotnet new sln with format slnx
+        run: dotnet new sln -v diag -d --format slnx
