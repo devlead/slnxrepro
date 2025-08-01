@@ -1,6 +1,7 @@
 # Download and install .NET SDK versions
 param(
-    [string]$InstallPath = ".dotnet"
+    [string]$InstallPath = ".dotnet",
+    [switch]$InstallDotNet8
 )
 
 # Create installation directory if it doesn't exist
@@ -42,13 +43,17 @@ function Remove-PathVariable([string]$VariableToRemove) {
     }
 }
 
-# Install .NET SDK 8.0.x (latest)
-Write-Host "Installing .NET SDK 8.0.x..."
-try {
-    & $ScriptPath -Channel "8.0" -Version "latest" -InstallDir $InstallPath
-    Write-Host "Successfully installed .NET SDK 8.0.x"
-} catch {
-    Write-Error "Failed to install .NET SDK 8.0.x: $_"
+# Install .NET SDK 8.0.x (latest) if flag is specified
+if ($InstallDotNet8) {
+    Write-Host "Installing .NET SDK 8.0.x..."
+    try {
+        & $ScriptPath -Channel "8.0" -Version "latest" -InstallDir $InstallPath
+        Write-Host "Successfully installed .NET SDK 8.0.x"
+    } catch {
+        Write-Error "Failed to install .NET SDK 8.0.x: $_"
+    }
+} else {
+    Write-Host "Skipping .NET SDK 8.0.x installation (use -InstallDotNet8 flag to install)"
 }
 
 # Install .NET SDK 10.0.100-preview.6.25358.103

@@ -1,4 +1,4 @@
-name: Build
+name: Obtain
 on:
   pull_request:
   push:
@@ -9,12 +9,13 @@ on:
 
 jobs:
   build:
-    name: Build
+    name: Build (${{ matrix.os }}, dotnet8=${{ matrix.install-dotnet8 }})
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
         os: [windows-latest]
+        install-dotnet8: [true, false]
     steps:
       - name: Get the sources
         uses: actions/checkout@v4
@@ -23,4 +24,9 @@ jobs:
 
       - name: Execute test.ps1
         shell: pwsh
-        run: ./test.ps1
+        run: |
+          if ("${{ matrix.install-dotnet8 }}" -eq "true") {
+            ./test.ps1 -InstallDotNet8
+          } else {
+            ./test.ps1
+          }
